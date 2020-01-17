@@ -84,6 +84,7 @@ public class AnnotatedBeanDefinitionReader {
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 		Assert.notNull(environment, "Environment must not be null");
 		this.registry = registry;
+		//ConditionEvaluator  用于对 @Condition 注解的评估
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
 		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 	}
@@ -133,7 +134,7 @@ public class AnnotatedBeanDefinitionReader {
 	 * e.g. {@link Configuration @Configuration} classes
 	 */
 	public void register(Class<?>... componentClasses) {
-		for (Class<?> componentClass : componentClasses) {
+		for (Class<?> componentClass : componentClasses) { // 对每个给定的class进行 registerBean
 			registerBean(componentClass);
 		}
 	}
@@ -250,17 +251,17 @@ public class AnnotatedBeanDefinitionReader {
 			@Nullable Class<? extends Annotation>[] qualifiers, @Nullable Supplier<T> supplier,
 			@Nullable BeanDefinitionCustomizer[] customizers) {
 
-		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
-		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
+		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass); // 1. 先声明一个 BeanDefinition
+		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) { // 通过判断Conditional注解，来判断是否跳过
 			return;
 		}
 
-		abd.setInstanceSupplier(supplier);
-		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
-		abd.setScope(scopeMetadata.getScopeName());
-		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
+		abd.setInstanceSupplier(supplier);//处理创建的回调
+		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd); // 处理作用域 放到scopeMetadata里面
+		abd.setScope(scopeMetadata.getScopeName());//再放到 BeanDefinition 里
+		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry)); //设置BeanName
 
-		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd); // 设置一些基本属性 如 Lazy，Primary 。。。
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
 				if (Primary.class == qualifier) {
@@ -280,8 +281,8 @@ public class AnnotatedBeanDefinitionReader {
 			}
 		}
 
-		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
-		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName); // 创建一个definitionHolder，作用是 具有名称和别名的BeanDefinition的持有人
+		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry); //设置作用域
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
 

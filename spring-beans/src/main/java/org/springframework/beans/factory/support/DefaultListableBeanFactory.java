@@ -850,18 +850,22 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
 		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		// 获取所有的BeanDefinitions副本，遍历并使用init方法来注册你的Bean definitions
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
 		for (String beanName : beanNames) {
+			// 获取所有的RootBeanDefinition,所谓的Rootxxx，其实就是统一的BeanDefinition视图
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				if (isFactoryBean(beanName)) {
+					// 如果是FactoryBean，则使用getBean时需要加上前缀 &
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						final FactoryBean<?> factory = (FactoryBean<?>) bean;
 						boolean isEagerInit;
 						if (System.getSecurityManager() != null && factory instanceof SmartFactoryBean) {
+							// 如果继承SmartFactoryBean
 							isEagerInit = AccessController.doPrivileged((PrivilegedAction<Boolean>)
 											((SmartFactoryBean<?>) factory)::isEagerInit,
 									getAccessControlContext());
@@ -921,12 +925,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 		}
 
-		BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName);
+		BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName); //看是否已经存在了这个属性
 		if (existingDefinition != null) {
 			if (!isAllowBeanDefinitionOverriding()) {
 				throw new BeanDefinitionOverrideException(beanName, beanDefinition, existingDefinition);
 			}
-			else if (existingDefinition.getRole() < beanDefinition.getRole()) {
+			else if (existingDefinition.getRole() < beanDefinition.getRole()) { // 关于角色前后定义
 				// e.g. was ROLE_APPLICATION, now overriding with ROLE_SUPPORT or ROLE_INFRASTRUCTURE
 				if (logger.isInfoEnabled()) {
 					logger.info("Overriding user-defined bean definition for bean '" + beanName +
@@ -954,8 +958,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (hasBeanCreationStarted()) {
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
 				synchronized (this.beanDefinitionMap) {
-					this.beanDefinitionMap.put(beanName, beanDefinition);
-					List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1);
+					this.beanDefinitionMap.put(beanName, beanDefinition); //实际上就是一个ConcurrentHashMap 存储 beanDefinition 使用BeanName作为Key
+					List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1); // 添加到updatedDefinitions里面
 					updatedDefinitions.addAll(this.beanDefinitionNames);
 					updatedDefinitions.add(beanName);
 					this.beanDefinitionNames = updatedDefinitions;

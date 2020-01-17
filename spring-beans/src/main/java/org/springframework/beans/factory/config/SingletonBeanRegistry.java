@@ -29,8 +29,7 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 2.0
  * @see ConfigurableBeanFactory
- * @see org.springframework.beans.factory.support.DefaultSingletonBeanRegistry
- * @see org.springframework.beans.factory.support.AbstractBeanFactory
+ * @see org.springframework.beans.factory.support.DefaultSingletonB * @see org.springframework.beans.factory.support.AbstractBeanFactoryeanRegistry
  */
 public interface SingletonBeanRegistry {
 

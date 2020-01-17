@@ -86,7 +86,7 @@ class BeanDefinitionValueResolver {
 	}
 
 
-	/**
+	/** 给定一个PropertyValue，返回一个值，如有必要，解析工厂中对其他bean的任何引用
 	 * Given a PropertyValue, return a value, resolving any references to other
 	 * beans in the factory if necessary. The value could be:
 	 * <li>A BeanDefinition, which leads to the creation of a corresponding

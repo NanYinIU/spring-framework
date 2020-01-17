@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
- * Helper for retrieving @AspectJ beans from a BeanFactory and building
+ * Helper for retrieving @AspectJ beans from a BeanFactory and building 帮助检索带有 @Aspectj注解的Bean
  * Spring Advisors based on them, for use with auto-proxying.
  *
  * @author Juergen Hoeller
@@ -106,10 +106,10 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
-										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
-								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
-								if (this.beanFactory.isSingleton(beanName)) {
-									this.advisorsCache.put(beanName, classAdvisors);
+										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);//获取AspectJ-annotated 类工厂
+								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);// 获取Aspect类中的Advice
+								if (this.beanFactory.isSingleton(beanName)) {// 如果是单例的
+									this.advisorsCache.put(beanName, classAdvisors);// advisorsCache 是以 BeanName为Key，List<Advice>为value的Map
 								}
 								else {
 									this.aspectFactoryCache.put(beanName, factory);

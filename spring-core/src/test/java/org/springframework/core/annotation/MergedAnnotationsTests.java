@@ -1788,7 +1788,7 @@ class MergedAnnotationsTests {
 				map);
 		GetMapping synthesized = annotation.synthesize();
 		assertThat(synthesized.value()).isEqualTo("/foo");
-		assertThat(synthesized.path()).isEqualTo("/foo");
+	assertThat(synthesized.path()).isEqualTo("/foo");
 	}
 
 	@Test

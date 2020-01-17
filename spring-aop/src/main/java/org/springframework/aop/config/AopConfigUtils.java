@@ -58,9 +58,9 @@ public abstract class AopConfigUtils {
 
 	static {
 		// Set up the escalation list...
-		APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator.class);
-		APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator.class);
-		APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator.class);
+		APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator.class);//基础设施通知自动代理创建类
+		APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator.class);//AspectJAware通知自动代理创建类
+		APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator.class);//AnnotationAwareAspectJ通知自动代理创建类
 	}
 
 
@@ -96,14 +96,14 @@ public abstract class AopConfigUtils {
 	@Nullable
 	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
-
+		// 注册或升级APC AnnotationAwareAspectJAutoProxyCreator 这个类是用来处理所有的AspectJ注解的切面
 		return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source);
 	}
 
 	public static void forceAutoProxyCreatorToUseClassProxying(BeanDefinitionRegistry registry) {
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
-			definition.getPropertyValues().add("proxyTargetClass", Boolean.TRUE);
+			definition.getPropertyValues().add("proxyTargetClass", Boolean.TRUE);// 增加 proxyTargetClass 属性
 		}
 	}
 
@@ -117,13 +117,13 @@ public abstract class AopConfigUtils {
 	@Nullable
 	private static BeanDefinition registerOrEscalateApcAsRequired(
 			Class<?> cls, BeanDefinitionRegistry registry, @Nullable Object source) {
-
+//		cls=AnnotationAwareAspectJAutoProxyCreator
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
-
+		// 是否存在internalAutoProxyCreator
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
-			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME); // 获得apcDefinition
 			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
-				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
+				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());//从升级列表中获取内容
 				int requiredPriority = findPriorityForClass(cls);
 				if (currentPriority < requiredPriority) {
 					apcDefinition.setBeanClassName(cls.getName());
@@ -131,7 +131,7 @@ public abstract class AopConfigUtils {
 			}
 			return null;
 		}
-
+		// 如果没有
 		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
 		beanDefinition.setSource(source);
 		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);

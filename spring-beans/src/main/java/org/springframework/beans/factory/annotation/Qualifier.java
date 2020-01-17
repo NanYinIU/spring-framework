@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation may be used on a field or parameter as a qualifier for
+ * This annotation may be used on a field or parameter as a qualifier for  用来区分候选Bean，也就是在注入的时候，使用@Qualifier来指定想要注入bean的名称，来达到注入特定bean的目的
  * candidate beans when autowiring. It may also be used to annotate other
  * custom annotations that can then in turn be used as qualifiers.
  *

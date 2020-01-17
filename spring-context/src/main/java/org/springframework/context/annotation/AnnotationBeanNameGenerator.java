@@ -74,16 +74,16 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 
 
 	@Override
-	public String generateBeanName(BeanDefinition definition, BeanDefinitionRegistry registry) {
+	public String generateBeanName(BeanDefinition definition, BeanDefinitionRegistry registry) { // 根据给定的 BeanDefinition 生成名称
 		if (definition instanceof AnnotatedBeanDefinition) {
-			String beanName = determineBeanNameFromAnnotation((AnnotatedBeanDefinition) definition);
+			String beanName = determineBeanNameFromAnnotation((AnnotatedBeanDefinition) definition); // 默认会使用value的值 （如果存在）
 			if (StringUtils.hasText(beanName)) {
 				// Explicit bean name found.
-				return beanName;
+				return beanName; // 存在返回value，否则使用buildDefaultBeanName设置默认的名称
 			}
 		}
 		// Fallback: generate a unique default bean name.
-		return buildDefaultBeanName(definition, registry);
+		return buildDefaultBeanName(definition, registry); // 使用的是类的 getShortName 也就是类名来作为Bean的name
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 		for (String type : types) {
 			AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(amd, type);
 			if (attributes != null && isStereotypeWithNameValue(type, amd.getMetaAnnotationTypes(type), attributes)) {
-				Object value = attributes.get("value");
+				Object value = attributes.get("value"); // 默认谁使用 value 的值
 				if (value instanceof String) {
 					String strVal = (String) value;
 					if (StringUtils.hasLength(strVal)) {

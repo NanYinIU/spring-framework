@@ -135,7 +135,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 			advisors.add(0, instantiationAdvisor);
 		}
 
-		// Find introduction fields.
+		// Find introduction fields. 获得 introduction 字段
 		for (Field field : aspectClass.getDeclaredFields()) {
 			Advisor advisor = getDeclareParentsAdvisor(field);
 			if (advisor != null) {
@@ -150,7 +150,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 		final List<Method> methods = new ArrayList<>();
 		ReflectionUtils.doWithMethods(aspectClass, method -> {
 			// Exclude pointcuts
-			if (AnnotationUtils.getAnnotation(method, Pointcut.class) == null) {
+			if (AnnotationUtils.getAnnotation(method, Pointcut.class) == null) { // 除去标注了Pointcut注解的方法 添加到 "method"中
 				methods.add(method);
 			}
 		}, ReflectionUtils.USER_DECLARED_METHODS);

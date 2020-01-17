@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.springframework.lang.Nullable;
 
 /**
+ * 简单标记类，用于单独autowired的属性值 可以使用getPropertyValue获取特殊的Bean 属性
  * Simple marker class for an individually autowired property value, to be added
  * to {@link BeanDefinition#getPropertyValues()} for a specific bean property.
  *
